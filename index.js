@@ -18,25 +18,27 @@ db.once(`open`, () => {
 });
 
 require('./routes/auth.route')(app);
+require('./routes/user.route')(app);
 
 app.listen(serverConfig.PORT, () => {
     console.log(`Server is up and running on PORT : ${serverConfig.PORT}`)
 });
     
+/*
+const { PORT, DB_URL } = require('./configs/config');
 
-// const { PORT, DB_URL } = require('./configs/config');
+mongoose.connect(DB_URL);
+const db = mongoose.connection;
 
-// mongoose.connect(DB_URL);
-// const db = mongoose.connection;
+db.on(`error`, () => {
+    console.log(`Error in connecting DB`);
+});
 
-// db.on(`error`, () => {
-//     console.log(`Error in connecting DB`);
-// });
+db.once('open', () => {
+    console.log(`Successfully connected to MongoDB`);
+});
 
-// db.once('open', () => {
-//     console.log(`Successfully connected to MongoDB`);
-// });
-
-// app.listen(PORT, () => {
-//     console.log(`Server is up and running on ${PORT}`);
-// });
+app.listen(PORT, () => {
+    console.log(`Server is up and running on ${PORT}`);
+});
+*/

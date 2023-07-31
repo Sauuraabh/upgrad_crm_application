@@ -1,6 +1,8 @@
 const User = require('../models/user.model');
 const bcrypt = require('bcryptjs');
 const constants = require('../utils/constants');
+const jwt = require('jsonwebtoken');
+const secretKey = require('../configs/auth.config');
 
 exports.signup = async (req, res) => {
     const hashPassword = bcrypt.hashSync(req.body.password, 8);
@@ -39,5 +41,34 @@ exports.signup = async (req, res) => {
         res.status(500).send({
             message: `Some internal error while registration`
         });
+    }
+}
+
+exports.signin = async (req, res) => {
+    const user = await User.findOne({userId : req.body.userId});
+    
+    if(user === null) return res.status(401).send({
+        message: `UserId : ${req.body.userId}, doesn't exists`
+    })
+
+    if(user.userStatus !== constants.userStatus.approved) return res.status(200).send({
+        message: `Can't login with ${user.userStatus} status`
+    })
+
+    if(!bcrypt.compareSync(req.body.password, user.password)) {
+        return res.status(401).send({
+            message : `Invalid password`
+        });
+    } else {
+        const token = jwt.sign({id: user.userId}, secretKey.secret, {expiresIn : 5000});
+        let userRequested = {
+            name: user.name,
+            email: user.email,
+            userId: user.userId,
+            userType: user.userType,
+            userStatus: user.userStatus,
+            accessToken: token
+        };
+        return res.status(200).send({userRequested});
     }
 }
