@@ -46,23 +46,44 @@ exports.findById = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
     try {
+        /*
         const user = await User.findOne({ userId: req.params.id });
         
         if (user == null) return res.status(404).send({
             message: `User doesnot exists`,
         });
-
+        
         req.body.name && (user.name = req.body.name);
         req.body.userType && (user.userType = req.body.userType);
         req.body.userStatus && (user.userStatus = req.body.userStatus);
 
         const updatedUser = await user.save();
+        */
+        
+        let user = await User.findOneAndUpdate(
+            { userId: req.params.id },
+            { $set: { userStatus: req.body.userStatus }}
+        );
+        user = await User.findOneAndUpdate(
+            { userId: req.params.id },
+            { $set: { name: req.body.name } }
+        );
+        user = await User.findOneAndUpdate(
+            { userId: req.params.id },
+            { $set: { userType: req.body.userType } }
+        );
+        
+        if (user == null) return res.status(404).send({
+            message: `User doesnot exists`,
+        });
+
+        console.log(user);
         
         res.status(200).send({
             message: `Updated user data`,
-            name: updatedUser.name,
-            email: updatedUser.userType,
-            userStatus: updatedUser.userStatus
+            name: user.name,
+            userType: user.userType,
+            userStatus: user.userStatus
         });
     } catch (err) {
         console.log(`Error in updating user : ${err}`);
