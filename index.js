@@ -19,6 +19,7 @@ db.once(`open`, () => {
 
 require('./routes/auth.route')(app);
 require('./routes/user.route')(app);
+require('./routes/ticket.route')(app);
 
 app.listen(serverConfig.PORT, () => {
     console.log(`Server is up and running on PORT : ${serverConfig.PORT}`)
